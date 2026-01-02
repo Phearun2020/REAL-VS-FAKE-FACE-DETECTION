@@ -1,0 +1,26 @@
+python -m venv venv
+source venv/bin/activate 
+
+pip install torch torchvision opencv-python matplotlib scikit-learn
+
+# datasets
+https://www.kaggle.com/datasets/xhlulu/140k-real-and-fake-faces?resource=download-directory&select=real_vs_fake
+data/classification/
+├── train/
+│   ├── real/
+│   └── fake/
+├── val/
+│   ├── real/
+│   └── fake/
+└── test/
+    ├── real/
+    └── fake/
+
+# 70% training, 15% validation, 15% testing split
+
+
+# Ensure the directory structure matches the above format
+PYTHONPATH=. python3 training/train_classifier.py
+
+# Evaluate the trained model
+PYTHONPATH=. python3 evaluation/eval_classifier.py
