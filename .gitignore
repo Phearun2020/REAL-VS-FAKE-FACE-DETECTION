@@ -31,6 +31,6 @@ data/detection/labels/test
 data/detection/labels/train
 data/detection/labels/val
 
-*.pth
+# *.pth
 venv/
 *.egg-info/

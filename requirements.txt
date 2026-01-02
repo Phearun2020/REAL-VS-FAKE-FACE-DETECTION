@@ -2,7 +2,7 @@ python -m venv venv
 source venv/bin/activate 
 
 pip install torch torchvision opencv-python matplotlib scikit-learn
-
+pip install seaborn
 # datasets
 https://www.kaggle.com/datasets/xhlulu/140k-real-and-fake-faces?resource=download-directory&select=real_vs_fake
 data/classification/
