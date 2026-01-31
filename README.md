@@ -10,25 +10,25 @@ This repo implements two image-level classifiers (**CNN** and **ResNet18**) and 
 
 ## 2) Dataset
 **Primary dataset:** 140K Real and Fake Faces (Kaggle)
-- Download and split into train/val/test.
+- Cleaned and re-labeled to numeric folders (0=real, 1=fake).
 - Expected directory structure:
 
 ```
-data/classification/
+data/dataset/
 ├── train/
-│   ├── real/
-│   └── fake/
-├── val/
-│   ├── real/
-│   └── fake/
+│   ├── 0/
+│   └── 1/
+├── validate/
+│   ├── 0/
+│   └── 1/
 └── test/
-    ├── real/
-    └── fake/
+    ├── 0/
+    └── 1/
 ```
 
 **Label mapping:**
-- This project remaps labels to **0 = real**, **1 = fake**.
-- See `utils/dataset.py` for details.
+- **0 = real**, **1 = fake**.
+- See `utils/dataset.py` for defaults.
 
 ### YOLO label generation (for detection model)
 `utils/generate_yolo_labels.py` converts the classification dataset into YOLO-style labels using a face detector.
@@ -121,26 +121,32 @@ results/resnet/
 └── confusion_matrix.png
 ```
 
+### Sanity Check (Random Samples)
+Quickly inspect predictions on random test images:
+```
+PYTHONPATH=. python3 evaluation/sanity_check.py --model resnet18 --model-path resnet_face_classifier.pth --num-samples 10
+```
+
 ### Evaluation Summary (Test Set)
 | Model | Accuracy | Precision | Recall | F1-score |
 | --- | --- | --- | --- | --- |
-| CNN | 0.9607 | 0.9667 | 0.9543 | 0.9604 |
-| ResNet18 | 0.8706 | 0.8226 | 0.9449 | 0.8795 |
+| CNN | 0.9278 | 0.9085 | 0.9214 | 0.9149 |
+| ResNet18 | 0.9754 | 0.9764 | 0.9743 | 0.9754 |
 
 Notes:
-- CNN results are from `results/cnn/metrics.json`.
-- ResNet18 results are from a **1-epoch** training run; train longer to improve performance.
+- CNN results are from `results/cnn/metrics.json` (after relabeling to 0=real, 1=fake).
+- ResNet18 results are from `results/resnet/metrics.json`.
 
 Discussion:
-- The CNN baseline performs strongly with high accuracy and balanced precision/recall on the test set.
-- The ResNet18 run used only 1 epoch, which explains the lower accuracy; however, recall is high, indicating strong detection of fake faces at the cost of more false positives.
-- With more epochs and optional ImageNet initialization (`--pretrained`), ResNet18 should improve and provide a more robust comparison.
+- The CNN baseline performs well on the relabeled dataset with balanced precision/recall.
+- ResNet18 outperforms the CNN baseline on all reported metrics in this run.
+- Further gains are possible with ImageNet initialization (`--pretrained`) and additional augmentation.
 
 ## 5) Inference / Web App
 Goal: input image/video -> detect faces -> classify real/fake -> draw bounding boxes.
 
 Implemented inference pipeline:
-- Face detection: Haar cascade (`inference/detect_faces.py`)
+- Face detection: MTCNN via `facenet-pytorch` (`inference/detect_faces.py`)
 - Classification: CNN or ResNet18 (`inference/predict_classifier.py`)
 - Visualization: bounding boxes + labels (`inference/visualize.py`)
 
@@ -150,6 +156,11 @@ PYTHONPATH=. python3 webapp/app.py
 ```
 
 Then open: http://localhost:5000
+
+#### Live Camera Mode
+- Click **Live Camera** in the UI to stream from your local webcam.
+- The camera runs on the **same machine** as the Flask server.
+- You can adjust model, confidence threshold, and frame stride for performance.
 
 ### How to Run the Web App (Step-by-step)
 1) Make sure you have model weights:

@@ -46,13 +46,13 @@ For end-to-end detection on images and videos:
 ## 5. Results (Test Set)
 | Model | Accuracy | Precision | Recall | F1-score |
 | --- | --- | --- | --- | --- |
-| CNN | 0.9607 | 0.9667 | 0.9543 | 0.9604 |
-| ResNet18 (1 epoch) | 0.8706 | 0.8226 | 0.9449 | 0.8795 |
+| CNN | 0.9278 | 0.9085 | 0.9214 | 0.9149 |
+| ResNet18 | 0.9754 | 0.9764 | 0.9743 | 0.9754 |
 
 ## 6. Discussion
-- The CNN baseline achieves strong overall accuracy and balanced precision/recall.
-- The 1-epoch ResNet18 run shows high recall but lower precision, indicating more false positives.
-- Training ResNet18 for more epochs (optionally with ImageNet initialization) is expected to improve accuracy and stabilize the comparison.
+- The CNN baseline achieves strong overall accuracy and balanced precision/recall on the relabeled dataset.
+- ResNet18 trained for 10 epochs outperforms the CNN baseline on all metrics.
+- Further improvements are possible with ImageNet initialization and additional data augmentation.
 
 ## 7. Conclusion
 The project meets the requirement of implementing and comparing at least two deep learning models. The CNN provides a strong baseline, while ResNet18 offers a clear path for improvement with longer training. The system also includes a working inference pipeline and a basic web app for image/video detection with bounding box visualization.

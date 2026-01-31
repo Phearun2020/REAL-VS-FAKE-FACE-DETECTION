@@ -6,70 +6,121 @@
     <title>Real vs Fake Face Detection</title>
     <style>
         :root {
-            --bg: #f7f4ef;
-            --ink: #1f1f1f;
-            --accent: #1b6a57;
-            --muted: #6b6b6b;
+            --bg: #f7f3ed;
+            --ink: #1d1c1a;
+            --accent: #0f6a5f;
+            --accent-2: #f1b874;
+            --muted: #6f6b65;
             --card: #ffffff;
+            --line: #e6e0d8;
+            --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
         }
+        * { box-sizing: border-box; }
         body {
             margin: 0;
-            font-family: "Trebuchet MS", "Lucida Sans", Arial, sans-serif;
-            background: radial-gradient(circle at top right, #e9f3ee 0%, var(--bg) 45%, #f7efe8 100%);
+            font-family: "Space Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            background:
+                radial-gradient(1200px 500px at 10% -10%, #fef7ea 0%, transparent 70%),
+                radial-gradient(900px 500px at 100% 0%, #e8f2f0 0%, transparent 70%),
+                var(--bg);
             color: var(--ink);
         }
         .container {
-            max-width: 980px;
-            margin: 40px auto;
-            padding: 0 16px;
+            max-width: 1120px;
+            margin: 36px auto 60px;
+            padding: 0 18px;
+        }
+        .hero {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 18px;
         }
         h1 {
-            margin-bottom: 6px;
-            font-size: 32px;
+            margin: 0;
+            font-size: 34px;
+            letter-spacing: -0.5px;
         }
         p {
-            margin-top: 0;
+            margin: 0;
             color: var(--muted);
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #f9efe2;
+            border: 1px solid #f0d9bf;
+            color: #7a4c0a;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+        @media (min-width: 980px) {
+            .layout {
+                grid-template-columns: 340px 1fr;
+            }
         }
         .card {
             background: var(--card);
-            border: 1px solid #e5e1db;
-            border-radius: 12px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
             padding: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--shadow);
         }
-        .row {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
         }
-        @media (min-width: 900px) {
-            .row {
-                grid-template-columns: 380px 1fr;
-            }
+        .tab {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: #faf7f2;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+        }
+        .tab.active {
+            background: #ffffff;
+            color: var(--ink);
+            border-color: #d8d0c5;
         }
         label {
             font-weight: 600;
             display: block;
             margin: 12px 0 6px;
         }
-        input[type="file"], select {
+        input[type="file"], select, input[type="number"] {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #d2ccc4;
-            border-radius: 8px;
+            padding: 10px 12px;
+            border: 1px solid #d7d0c7;
+            border-radius: 10px;
             background: #fff;
         }
         button {
             margin-top: 14px;
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 14px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             background: var(--accent);
             color: #fff;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
+        }
+        .btn-secondary {
+            background: #fff;
+            color: var(--ink);
+            border: 1px solid var(--line);
         }
         .error {
             color: #a31919;
@@ -77,26 +128,53 @@
         }
         .summary {
             margin-top: 12px;
-            padding: 8px 12px;
-            background: #f0f7f4;
-            border-radius: 8px;
-            border: 1px solid #d8ebe5;
+            padding: 10px 12px;
+            background: #f1f6f4;
+            border-radius: 10px;
+            border: 1px solid #dbe8e4;
+        }
+        .output {
+            min-height: 420px;
+            display: grid;
+            place-items: center;
+            border: 1px dashed #d7d0c7;
+            border-radius: 14px;
+            padding: 16px;
+            background: #fff;
         }
         img, video {
             max-width: 100%;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #e5e1db;
+        }
+        .note {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 10px;
+        }
+        .camera-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Real vs Fake Face Detection</h1>
-        <p>Upload an image or video. The system detects faces and labels each as real or AI-generated.</p>
+        <div class="hero">
+            <div class="badge">Live demo • Image / Video / Camera</div>
+            <h1>Real vs Fake Face Detection</h1>
+            <p>Detect AI-generated faces with clean visual feedback and real-time camera support.</p>
+        </div>
 
-        <div class="row">
+        <div class="layout">
             <div class="card">
-                <form method="POST" enctype="multipart/form-data">
+                <div class="tabs">
+                    <button class="tab active" id="tab-upload" type="button">Upload</button>
+                    <button class="tab" id="tab-camera" type="button">Live Camera</button>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" id="upload-form">
                     <label for="file">Input image/video</label>
                     <input type="file" name="file" id="file" required>
 
@@ -106,8 +184,31 @@
                         <option value="resnet18">ResNet18 (transfer)</option>
                     </select>
 
+                    <label for="threshold">Confidence threshold</label>
+                    <input type="number" step="0.01" min="0" max="1" name="threshold" id="threshold" value="{{ threshold or 0.5 }}">
+
                     <button type="submit">Run Detection</button>
                 </form>
+
+                <div id="camera-controls" style="display:none;">
+                    <label for="cam-model">Model</label>
+                    <select id="cam-model">
+                        <option value="cnn">CNN (baseline)</option>
+                        <option value="resnet18">ResNet18 (transfer)</option>
+                    </select>
+
+                    <label for="cam-threshold">Confidence threshold</label>
+                    <input type="number" step="0.01" min="0" max="1" id="cam-threshold" value="0.5">
+
+                    <label for="cam-stride">Frame stride</label>
+                    <input type="number" step="1" min="1" max="10" id="cam-stride" value="1">
+
+                    <div class="camera-actions">
+                        <button type="button" id="start-camera">Start Camera</button>
+                        <button type="button" class="btn-secondary" id="stop-camera">Stop</button>
+                    </div>
+                    <p class="note">Live camera runs on the same machine as the server.</p>
+                </div>
 
                 {% if error %}
                 <p class="error">{{ error }}</p>
@@ -118,24 +219,70 @@
                     <strong>Summary</strong><br>
                     Total faces: {{ summary.total }}<br>
                     Real: {{ summary.real }}<br>
-                    Fake: {{ summary.fake }}
+                    Fake: {{ summary.fake }}<br>
+                    Uncertain: {{ summary.uncertain }}
                 </div>
                 {% endif %}
             </div>
 
             <div class="card">
-                {% if image_url %}
-                    <img src="{{ url_for('static', filename=image_url) }}" alt="Detection result">
-                {% elif video_url %}
-                    <video controls>
-                        <source src="{{ url_for('static', filename=video_url) }}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                {% else %}
-                    <p>No output yet. Upload a file to see results.</p>
-                {% endif %}
+                <div class="output" id="output">
+                    {% if image_url %}
+                        <img src="{{ url_for('static', filename=image_url) }}" alt="Detection result">
+                    {% elif video_url %}
+                        <video controls>
+                            <source src="{{ url_for('static', filename=video_url) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% else %}
+                        <p>No output yet. Upload a file to see results.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        const tabUpload = document.getElementById('tab-upload');
+        const tabCamera = document.getElementById('tab-camera');
+        const uploadForm = document.getElementById('upload-form');
+        const cameraControls = document.getElementById('camera-controls');
+        const output = document.getElementById('output');
+
+        const startBtn = document.getElementById('start-camera');
+        const stopBtn = document.getElementById('stop-camera');
+        const camModel = document.getElementById('cam-model');
+        const camThreshold = document.getElementById('cam-threshold');
+        const camStride = document.getElementById('cam-stride');
+
+        function setActive(tab) {
+            if (tab === 'upload') {
+                tabUpload.classList.add('active');
+                tabCamera.classList.remove('active');
+                uploadForm.style.display = 'block';
+                cameraControls.style.display = 'none';
+            } else {
+                tabCamera.classList.add('active');
+                tabUpload.classList.remove('active');
+                uploadForm.style.display = 'none';
+                cameraControls.style.display = 'block';
+            }
+        }
+
+        tabUpload.addEventListener('click', () => setActive('upload'));
+        tabCamera.addEventListener('click', () => setActive('camera'));
+
+        startBtn.addEventListener('click', () => {
+            const model = camModel.value;
+            const threshold = camThreshold.value || 0.5;
+            const stride = camStride.value || 1;
+            const url = `/camera_feed?model=${encodeURIComponent(model)}&threshold=${encodeURIComponent(threshold)}&stride=${encodeURIComponent(stride)}`;
+            output.innerHTML = `<img src="${url}" alt="Live camera">`;
+        });
+
+        stopBtn.addEventListener('click', () => {
+            output.innerHTML = '<p>Camera stopped. Start again when ready.</p>';
+        });
+    </script>
 </body>
 </html>

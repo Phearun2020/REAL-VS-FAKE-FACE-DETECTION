@@ -3,20 +3,21 @@ source venv/bin/activate
 
 pip install torch torchvision opencv-python matplotlib scikit-learn
 pip install flask pillow
+pip install facenet-pytorch
 pip install seaborn
 pip install opencv-python
 # datasets
 https://www.kaggle.com/datasets/xhlulu/140k-real-and-fake-faces?resource=download-directory&select=real_vs_fake
-data/classification/
+data/dataset/
 ├── train/
-│   ├── real/
-│   └── fake/
-├── val/
-│   ├── real/
-│   └── fake/
+│   ├── 0/
+│   └── 1/
+├── validate/
+│   ├── 0/
+│   └── 1/
 └── test/
-    ├── real/
-    └── fake/
+    ├── 0/
+    └── 1/
 
 # 70% training, 15% validation, 15% testing split
 

@@ -1,3 +1,4 @@
+import argparse
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -6,7 +7,7 @@ from models.cnn_classifier import CNNClassifier
 from utils.dataset import get_train_dataloader, get_val_dataloader
 import os
 
-def train_model(num_epochs=15, batch_size=32, learning_rate=0.001, save_path='cnn_face_classifier.pth'):
+def train_model(num_epochs=15, batch_size=32, learning_rate=0.001, save_path='cnn_face_classifier.pth', num_workers=0):
     """
     Train the CNN classifier.
     """
@@ -23,8 +24,8 @@ def train_model(num_epochs=15, batch_size=32, learning_rate=0.001, save_path='cn
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     # Data loaders
-    train_loader = get_train_dataloader(batch_size=batch_size)
-    val_loader = get_val_dataloader(batch_size=batch_size)
+    train_loader = get_train_dataloader(batch_size=batch_size, num_workers=num_workers)
+    val_loader = get_val_dataloader(batch_size=batch_size, num_workers=num_workers)
 
     # Training loop
     best_accuracy = 0.0
@@ -85,5 +86,20 @@ def train_model(num_epochs=15, batch_size=32, learning_rate=0.001, save_path='cn
 
     print("Training completed.")
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Train CNN classifier")
+    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--save-path", type=str, default="cnn_face_classifier.pth")
+    parser.add_argument("--num-workers", type=int, default=0)
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    train_model(num_epochs=20)
+    args = parse_args()
+    train_model(num_epochs=args.epochs,
+                batch_size=args.batch_size,
+                learning_rate=args.lr,
+                save_path=args.save_path,
+                num_workers=args.num_workers)

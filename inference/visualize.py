@@ -1,7 +1,7 @@
 import cv2
 
 
-def draw_boxes(image_bgr, boxes, predictions):
+def draw_boxes(image_bgr, boxes, predictions, threshold=0.5):
     """
     Draw bounding boxes and labels on image.
     predictions: list of dicts from predict_faces
@@ -12,8 +12,13 @@ def draw_boxes(image_bgr, boxes, predictions):
         label = pred.get("label", "unknown")
         prob_real = pred.get("prob_real", 0.0)
         prob_fake = pred.get("prob_fake", 0.0)
+        confidence = max(prob_real, prob_fake)
 
-        if label == "real":
+        if confidence < threshold:
+            label = "uncertain"
+            color = (120, 120, 120)  # gray
+            conf = confidence
+        elif label == "real":
             color = (0, 200, 0)  # green
             conf = prob_real
         else:

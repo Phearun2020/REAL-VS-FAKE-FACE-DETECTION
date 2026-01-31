@@ -1,15 +1,15 @@
 import cv2
 import os
 
-CASCADE_PATH = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-face_detector = cv2.CascadeClassifier(CASCADE_PATH)
+from utils.face_detector import detect_faces_bgr
 
 # Change paths if needed
-BASE_CLASSIFICATION_DIR = "data/classification"
+BASE_CLASSIFICATION_DIR = "data/dataset"
 BASE_DETECTION_DIR = "data/detection"
 
-SPLITS = ["train", "val", "test"]
-CLASSES = {"real": 0, "fake": 1}
+SPLITS = ["train", "validate", "test"]
+# Folder names are numeric: 0=real, 1=fake
+CLASSES = {"0": 0, "1": 1}
 
 
 def convert_to_yolo(x, y, w, h, img_w, img_h):
@@ -40,11 +40,7 @@ for split in SPLITS:
                 continue
 
             h, w, _ = img.shape
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-            faces = face_detector.detectMultiScale(
-                gray, scaleFactor=1.1, minNeighbors=5
-            )
+            faces = detect_faces_bgr(img, min_confidence=0.90, min_size=40)
 
             if len(faces) == 0:
                 continue  # skip images with no detected face
