@@ -1,3 +1,4 @@
+import argparse
 import torch
 import torch.nn as nn
 from models.cnn_classifier import CNNClassifier
@@ -9,7 +10,7 @@ import seaborn as sns
 import os
 import json
 
-def evaluate_model(model_path='cnn_face_classifier.pth', batch_size=32):
+def evaluate_model(model_path='cnn_face_classifier.pth', batch_size=32, num_workers=0):
     """
     Evaluate the CNN classifier on the test set.
     Compute accuracy, precision, recall, F1-score, and confusion matrix.
@@ -26,7 +27,7 @@ def evaluate_model(model_path='cnn_face_classifier.pth', batch_size=32):
     model.eval()
 
     # Load test data
-    test_loader = get_test_dataloader(batch_size=batch_size)
+    test_loader = get_test_dataloader(batch_size=batch_size, num_workers=num_workers)
 
     # Collect predictions and labels
     all_preds = []
@@ -87,5 +88,14 @@ def evaluate_model(model_path='cnn_face_classifier.pth', batch_size=32):
 
     print(f"Results saved to {results_dir}")
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Evaluate CNN classifier")
+    parser.add_argument("--model-path", type=str, default="cnn_face_classifier.pth")
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--num-workers", type=int, default=0)
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    evaluate_model()
+    args = parse_args()
+    evaluate_model(model_path=args.model_path, batch_size=args.batch_size, num_workers=args.num_workers)

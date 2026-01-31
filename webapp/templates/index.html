@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real vs Fake Face Detection</title>
+    <style>
+        :root {
+            --bg: #f7f4ef;
+            --ink: #1f1f1f;
+            --accent: #1b6a57;
+            --muted: #6b6b6b;
+            --card: #ffffff;
+        }
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", "Lucida Sans", Arial, sans-serif;
+            background: radial-gradient(circle at top right, #e9f3ee 0%, var(--bg) 45%, #f7efe8 100%);
+            color: var(--ink);
+        }
+        .container {
+            max-width: 980px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+        h1 {
+            margin-bottom: 6px;
+            font-size: 32px;
+        }
+        p {
+            margin-top: 0;
+            color: var(--muted);
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid #e5e1db;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        @media (min-width: 900px) {
+            .row {
+                grid-template-columns: 380px 1fr;
+            }
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin: 12px 0 6px;
+        }
+        input[type="file"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d2ccc4;
+            border-radius: 8px;
+            background: #fff;
+        }
+        button {
+            margin-top: 14px;
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .error {
+            color: #a31919;
+            font-weight: 600;
+        }
+        .summary {
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: #f0f7f4;
+            border-radius: 8px;
+            border: 1px solid #d8ebe5;
+        }
+        img, video {
+            max-width: 100%;
+            border-radius: 10px;
+            border: 1px solid #e5e1db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real vs Fake Face Detection</h1>
+        <p>Upload an image or video. The system detects faces and labels each as real or AI-generated.</p>
+
+        <div class="row">
+            <div class="card">
+                <form method="POST" enctype="multipart/form-data">
+                    <label for="file">Input image/video</label>
+                    <input type="file" name="file" id="file" required>
+
+                    <label for="model">Model</label>
+                    <select name="model" id="model">
+                        <option value="cnn">CNN (baseline)</option>
+                        <option value="resnet18">ResNet18 (transfer)</option>
+                    </select>
+
+                    <button type="submit">Run Detection</button>
+                </form>
+
+                {% if error %}
+                <p class="error">{{ error }}</p>
+                {% endif %}
+
+                {% if summary %}
+                <div class="summary">
+                    <strong>Summary</strong><br>
+                    Total faces: {{ summary.total }}<br>
+                    Real: {{ summary.real }}<br>
+                    Fake: {{ summary.fake }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                {% if image_url %}
+                    <img src="{{ url_for('static', filename=image_url) }}" alt="Detection result">
+                {% elif video_url %}
+                    <video controls>
+                        <source src="{{ url_for('static', filename=video_url) }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                    <p>No output yet. Upload a file to see results.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
