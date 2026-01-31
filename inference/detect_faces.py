@@ -1,0 +1,1 @@
+from utils.face_detector import detect_faces_bgr
