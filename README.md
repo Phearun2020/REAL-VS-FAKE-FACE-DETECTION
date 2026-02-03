@@ -182,10 +182,9 @@ PYTHONPATH=. python3 webapp/app.py
 - If you see a "Model weights not found" error, confirm the `.pth` files exist in the project root.
 
 ### Screenshots
-Add your screenshots here after running the web app:
-- `assets/webapp_home.png` (home screen)
-- `assets/webapp_result_image.png` (image result with boxes)
-- `assets/webapp_result_video.png` (video result with boxes)
+Sample web app result:
+
+![Web app sample result](webapp_sample.png)
 
 ## 6) Project Structure
 ```
@@ -203,5 +202,12 @@ To fully satisfy the project requirements, ensure you:
 - Train **at least two** deep learning models.
 - Compare their performance (accuracy/F1/confusion matrix).
 - Discuss results in your technical report (max 4 pages).
+
+## 8) References
+
+```
+Kaggle Dataset: 140K Real and Fake Faces
+Kaggle Dataset: Real vs AI-Generated Faces (philosopher0808)
+https://www.kaggle.com/datasets/philosopher0808/real-vs-ai-generated-faces-dataset/data
 
 This repo now includes two models and a basic web app for detection and visualization.
