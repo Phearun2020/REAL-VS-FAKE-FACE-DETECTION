@@ -49,6 +49,9 @@ For end-to-end detection on images and videos:
 | CNN | 0.9666 | 0.9760 | 0.9440 | 0.9597 |
 | ResNet18 | 0.9754 | 0.9764 | 0.9743 | 0.9754 |
 
+### Web App Screenshot
+![Web app sample result](webapp_sample.png)
+
 ## 6. Discussion
 - The CNN baseline achieves strong overall accuracy and balanced precision/recall on the relabeled dataset.
 - ResNet18 trained for 10 epochs outperforms the CNN baseline on all metrics.
