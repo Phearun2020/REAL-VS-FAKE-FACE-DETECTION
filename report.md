@@ -46,7 +46,7 @@ For end-to-end detection on images and videos:
 ## 5. Results (Test Set)
 | Model | Accuracy | Precision | Recall | F1-score |
 | --- | --- | --- | --- | --- |
-| CNN | 0.9278 | 0.9085 | 0.9214 | 0.9149 |
+| CNN | 0.9666 | 0.9760 | 0.9440 | 0.9597 |
 | ResNet18 | 0.9754 | 0.9764 | 0.9743 | 0.9754 |
 
 ## 6. Discussion
@@ -65,4 +65,6 @@ The project meets the requirement of implementing and comparing at least two dee
 ## 9. References
 ```
 Kaggle Dataset: 140K Real and Fake Faces
+Kaggle Dataset: Real vs AI-Generated Faces (philosopher0808)
+https://www.kaggle.com/datasets/philosopher0808/real-vs-ai-generated-faces-dataset/data
 ```

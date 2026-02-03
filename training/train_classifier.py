@@ -7,7 +7,7 @@ from models.cnn_classifier import CNNClassifier
 from utils.dataset import get_train_dataloader, get_val_dataloader
 import os
 
-def train_model(num_epochs=15, batch_size=32, learning_rate=0.001, save_path='cnn_face_classifier.pth', num_workers=0):
+def train_model(num_epochs=15, batch_size=32, learning_rate=0.001, save_path='cnn_face_classifier.pth', num_workers=4):
     """
     Train the CNN classifier.
     """
@@ -92,7 +92,7 @@ def parse_args():
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--save-path", type=str, default="cnn_face_classifier.pth")
-    parser.add_argument("--num-workers", type=int, default=0)
+    parser.add_argument("--num-workers", type=int, default=4)
     return parser.parse_args()
 
 

@@ -12,7 +12,7 @@ def train_model(num_epochs=10,
                 save_path='resnet_face_classifier.pth',
                 pretrained=False,
                 freeze_backbone=False,
-                num_workers=0):
+                num_workers=4):
     """
     Train the ResNet18 classifier.
     """
@@ -95,7 +95,7 @@ def parse_args():
     parser.add_argument("--save-path", type=str, default="resnet_face_classifier.pth")
     parser.add_argument("--pretrained", action="store_true")
     parser.add_argument("--freeze-backbone", action="store_true")
-    parser.add_argument("--num-workers", type=int, default=0)
+    parser.add_argument("--num-workers", type=int, default=4)
     return parser.parse_args()
 
 

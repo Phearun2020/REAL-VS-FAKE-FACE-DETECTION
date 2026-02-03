@@ -90,6 +90,7 @@ Train the CNN classifier:
 ```
 PYTHONPATH=. python3 training/train_classifier.py
 ```
+Tip: if your machine can handle it, use `--num-workers 4` to speed up data loading (fallback to 0 if you see permission errors).
 
 Evaluate the trained model:
 ```
@@ -130,7 +131,7 @@ PYTHONPATH=. python3 evaluation/sanity_check.py --model resnet18 --model-path re
 ### Evaluation Summary (Test Set)
 | Model | Accuracy | Precision | Recall | F1-score |
 | --- | --- | --- | --- | --- |
-| CNN | 0.9278 | 0.9085 | 0.9214 | 0.9149 |
+| CNN | 0.9666 | 0.9760 | 0.9440 | 0.9597 |
 | ResNet18 | 0.9754 | 0.9764 | 0.9743 | 0.9754 |
 
 Notes:
