@@ -157,6 +157,87 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
+        .section {
+            margin-top: 22px;
+        }
+        .section h2 {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .stat-card {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fbfaf7;
+        }
+        .stat-card span {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .stat-card strong {
+            font-size: 20px;
+        }
+        .chart {
+            display: grid;
+            gap: 10px;
+        }
+        .bar-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 60px;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+        .bar {
+            height: 10px;
+            background: #e8e2d9;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .bar > i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, #0f6a5f, #66d3c2);
+        }
+        .frames {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        .frames img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #e5e1db;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .table th, .table td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--line);
+        }
+        .pill {
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 12px;
+            display: inline-block;
+        }
+        .pill.real { background: #e6f6f1; color: #0f6a5f; }
+        .pill.fake { background: #fde9e9; color: #b52b2b; }
+        .pill.uncertain { background: #ececec; color: #5a5a5a; }
     </style>
 </head>
 <body>
@@ -240,8 +321,87 @@
                 </div>
             </div>
         </div>
+
+        <div class="section card">
+            <h2>Analysis Details</h2>
+            {% if analysis %}
+            <div class="stats">
+                <div class="stat-card">
+                    <span>Frames analyzed</span>
+                    <strong data-frames>{{ analysis.frames_analyzed }}</strong>
+                </div>
+                <div class="stat-card">
+                    <span>Processing time</span>
+                    <strong data-time>{{ '%.2f'|format(analysis.processing_time) }}s</strong>
+                </div>
+                <div class="stat-card">
+                    <span>Avg. confidence</span>
+                    <strong data-conf>{{ '%.2f'|format(analysis.avg_confidence * 100) }}%</strong>
+                </div>
+            </div>
+            {% else %}
+            <p>No analysis yet. Run detection to see details.</p>
+            {% endif %}
+        </div>
+
+        <div class="section card">
+            <h2>Per-face Confidence</h2>
+            {% if per_face and per_face|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Face</th>
+                        <th>Label</th>
+                        <th>Confidence</th>
+                        <th>P(real)</th>
+                        <th>P(fake)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in per_face %}
+                    <tr>
+                        <td>#{{ loop.index }}</td>
+                        <td>
+                            <span class="pill {{ p.label }}">
+                                {{ p.label }}
+                            </span>
+                        </td>
+                        <td>{{ '%.2f'|format(p.confidence * 100) }}%</td>
+                        <td>{{ '%.2f'|format(p.prob_real * 100) }}%</td>
+                        <td>{{ '%.2f'|format(p.prob_fake * 100) }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No face details yet. Run detection to populate this table.</p>
+            {% endif %}
+        </div>
+
+        <div class="section card">
+            <h2>Model Performance Comparison (Accuracy)</h2>
+            {% if metrics.cnn and metrics.resnet18 %}
+            <canvas id="performanceChart" height="120"></canvas>
+            {% else %}
+            <p>Metrics not available. Run evaluation to populate results.</p>
+            {% endif %}
+        </div>
+
+        <div class="section card">
+            <h2>Analyzed Frames</h2>
+            {% if frames and frames|length > 0 %}
+            <div class="frames">
+                {% for f in frames %}
+                    <img src="{{ url_for('static', filename=f) }}" alt="Frame {{ loop.index }}">
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No frames captured yet. Upload a video to generate key frames.</p>
+            {% endif %}
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const tabUpload = document.getElementById('tab-upload');
         const tabCamera = document.getElementById('tab-camera');
@@ -254,6 +414,7 @@
         const camModel = document.getElementById('cam-model');
         const camThreshold = document.getElementById('cam-threshold');
         const camStride = document.getElementById('cam-stride');
+        let statsTimer = null;
 
         function setActive(tab) {
             if (tab === 'upload') {
@@ -278,11 +439,62 @@
             const stride = camStride.value || 1;
             const url = `/camera_feed?model=${encodeURIComponent(model)}&threshold=${encodeURIComponent(threshold)}&stride=${encodeURIComponent(stride)}`;
             output.innerHTML = `<img src="${url}" alt="Live camera">`;
+
+            if (statsTimer) {
+                clearInterval(statsTimer);
+            }
+            statsTimer = setInterval(async () => {
+                try {
+                    const res = await fetch('/camera_stats');
+                    const data = await res.json();
+                    const frames = document.querySelector('[data-frames]');
+                    const time = document.querySelector('[data-time]');
+                    const conf = document.querySelector('[data-conf]');
+                    if (frames) frames.textContent = data.frames_analyzed;
+                    if (time) time.textContent = `${data.processing_time.toFixed(2)}s`;
+                    if (conf) conf.textContent = `${(data.avg_confidence * 100).toFixed(2)}%`;
+                } catch (e) {
+                    // ignore intermittent polling errors
+                }
+            }, 1000);
         });
 
         stopBtn.addEventListener('click', () => {
             output.innerHTML = '<p>Camera stopped. Start again when ready.</p>';
+            if (statsTimer) {
+                clearInterval(statsTimer);
+                statsTimer = null;
+            }
         });
+
+        {% if metrics.cnn and metrics.resnet18 %}
+        const ctx = document.getElementById('performanceChart');
+        if (ctx) {
+            const cnnAcc = {{ metrics.cnn.accuracy * 100 }};
+            const resAcc = {{ metrics.resnet18.accuracy * 100 }};
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['CNN', 'ResNet18'],
+                    datasets: [{
+                        label: 'Accuracy (%)',
+                        data: [cnnAcc.toFixed(1), resAcc.toFixed(1)],
+                        backgroundColor: ['#0f6a5f', '#66d3c2'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+        {% endif %}
     </script>
 </body>
 </html>

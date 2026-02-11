@@ -3,6 +3,7 @@ source venv/bin/activate
 
 pip install torch torchvision opencv-python matplotlib scikit-learn
 pip install flask pillow
+pip install pillow-heif
 pip install facenet-pytorch
 pip install seaborn
 pip install opencv-python
